@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="./CSS/style.css">
+        <script src="./JS/main.js" defer></script>
+        <title>Zadira</title>
+    </head>
+    <body>
+        <header>
+            <h1 id="titulo">Zadira</h1>
+            <nav>
+                <ul>
+                    <li><a href="#" class="link">Inicio</a></li>
+                    <li><a href="./index.html" class="link">Productos</a></li>
+                    <li><a href="./pages/carrito.html" class="link">Carrito</a></li>
+                </ul>
+            </nav>  
+        </header>   
+        <main>
+            <h2>Productos</h2>
+            <form id="formulario">
+                <input type="text" placeholder="Buscar producto">
+                <input type="submit" value="Buscar">
+            </form>
+            <section id="productos" class="productos"></section>
+
+            <section id="carrito" class="carrito">
+                <h2>Carrito de compras</h2>
+                <ul id="lista-carrito"></ul>
+                <p id="mensajeCarrito"></p>
+                <button id="vaciar-carrito">Vaciar carrito</button>
+            </section>
+            <form id="form-agregar">
+                <input type="text" id="nombre-producto" placeholder="Nombre del  producto">
+                <input type="number" id="precio-producto" placeholder="Precio">
+                <input type="text" id="categoria-producto" placeholder="Categoría">
+                <input type="number" id="stock-producto" placeholder="Stock">
+                <input type="text" id="imagen-producto" placeholder="URL de la imagen">
+                <button type="submit">Agregar producto</button>
+            </form>
+        </main>
+        <footer>
+            <p>&copy; 2024 Zadira. Todos los derechos reservados.</p>
+        </footer>
+    </body>
+</html>
