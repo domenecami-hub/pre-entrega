@@ -1,4 +1,4 @@
-const productos = [
+const productosIniciales = [
     {
         id: 1, 
         nombre: "Pulsera", 
@@ -72,16 +72,25 @@ const productos = [
     }
 ];
 
-const carrito = [];
+const productos = JSON.parse(localStorage.getItem("productos")) ?? productosIniciales;
+
+const carrito = JSON.parse(localStorage.getItem("misProductos")) ?? [];
+
+const vaciarCarrito = document.getElementById("vaciar-carrito");
+const formulario = document.getElementById("formulario");
+const mensaje = document.getElementById("mensajeCarrito");
+const inputBuscar = document.querySelector("#formulario input");
+const formularioAgregar = document.getElementById("form-agregar");
 
 function imprimirElementosEnHTML(productos) {
   const productosDOM = document.getElementById("productos");
-
   productosDOM.innerHTML = "";
 
   for (const producto of productos) {
     const card = document.createElement("div");
     card.classList.add("card");
+
+    const estadoStock = producto.stock > 0 ? "Disponible" : "Sin stock";
 
     card.innerHTML = `
       <img src="${producto.img}" alt="${producto.nombre}">
@@ -89,6 +98,7 @@ function imprimirElementosEnHTML(productos) {
       <p>Categoría: ${producto.categoria}</p>
       <p>Precio: $${producto.precio}</p>
       <p>Stock: ${producto.stock}</p>
+      <p>Estado: ${estadoStock}</p>
       <button class="card-boton" id="${producto.nombre}${producto.id}">Comprar</button>
     `;
 
@@ -104,10 +114,12 @@ function imprimirElementosEnHTML(productos) {
   }
 }
 
-//Agregar productos al carrito, mostrar mensaje de agregado y vaciar carrito
+//Agregar productos al carrito
 
 function agregarProductoAlCarrito(producto) {
   carrito.push(producto);
+
+  localStorage.setItem("misProductos", JSON.stringify(carrito));
 
   mensaje.textContent = `Agregaste ${producto.nombre} al carrito`;
 
@@ -116,31 +128,54 @@ function agregarProductoAlCarrito(producto) {
 
 
 function imprimirCarritoEnHTML() {
-  const listaCarrito = document.getElementById("lista-carrito");
+  const listaCarrito = document.getElementById("listaDeCarrito");
   listaCarrito.innerHTML = "";
 
-  for (const producto of carrito) {
-    listaCarrito.innerHTML += `
-      <li>${producto.nombre}: $${producto.precio}</li>
+  for (const [index, producto] of carrito.entries()) {
+    const { nombre, precio } = producto;
+    const item = document.createElement("li");
+
+    item.innerHTML = `
+        ${nombre}: $${precio}
+        <button class="btn-eliminar" data-index="${index}"> Eliminar </button>
     `;
+
+    listaCarrito.appendChild(item);
   }
+
+  agregarEventosEliminar();
+
 }
-const vaciarCarrito = document.getElementById("vaciar-carrito");
+
+function agregarEventosEliminar() {
+  const botonesEliminar = document.querySelectorAll(".btn-eliminar");
+  botonesEliminar.forEach((boton) => {
+
+    boton.addEventListener("click", () => {
+
+        const index = Number(boton.dataset.index);
+
+        carrito.splice(index, 1);
+
+        localStorage.setItem("misProductos", JSON.stringify(carrito));
+
+        imprimirCarritoEnHTML();
+
+        mensaje.textContent = "Producto eliminado del carrito";
+    });
+  });
+}
 
 vaciarCarrito.addEventListener("click", () => {
   carrito.length = 0;
+  localStorage.setItem( "misProductos", JSON.stringify(carrito) );
+
   imprimirCarritoEnHTML();
+
   mensaje.textContent = "Carrito vaciado";
 });
 
-const formulario = document.getElementById("formulario");
-const mensaje = document.getElementById("mensajeCarrito");
-
-imprimirElementosEnHTML(productos);
-
 formulario.addEventListener("submit", tomarDatosForm);
-
-const inputBuscar = document.querySelector("#formulario input");
 
 inputBuscar.addEventListener("keyup", () => {
   const texto = inputBuscar.value.toLowerCase();
@@ -154,17 +189,13 @@ inputBuscar.addEventListener("keyup", () => {
 
 function tomarDatosForm(e) {
   e.preventDefault();
-
-  let inputBuscar = e.target[0].value;
-
-  let productosFiltrados = productos.filter((elemento) =>
-    elemento.nombre.toLowerCase().includes(inputBuscar.toLowerCase()),
-  );
+  const textoBuscar = e.target[0].value;
+  const productosFiltrados = productos.filter((producto) =>
+      producto.nombre.toLowerCase().includes(textoBuscar.toLowerCase()));
 
   imprimirElementosEnHTML(productosFiltrados);
-}
 
-const formularioAgregar = document.getElementById("form-agregar");
+}
 
 formularioAgregar.addEventListener("submit", agregarProducto);
 
@@ -188,8 +219,13 @@ function agregarProducto(e) {
   };
 
   productos.push(nuevoProducto);
+  localStorage.setItem( "productos", JSON.stringify(productos));
 
   imprimirElementosEnHTML(productos);
 
-  document.getElementById("form-agregar").reset();
+  formularioAgregar.reset();
 }
+
+imprimirElementosEnHTML(productos);
+
+imprimirCarritoEnHTML();
