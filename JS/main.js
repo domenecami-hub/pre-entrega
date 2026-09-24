@@ -51,7 +51,7 @@ const productosIniciales = [
         nombre: "Top Sia",
         precio: 60000,
         categoria: "Indumentaria",
-        stock: 2,
+        stock: 0,
         img: "./assets/top-sia-publi.jpg.jpeg"
     },
     {
@@ -74,7 +74,27 @@ const productosIniciales = [
 
 const productos = JSON.parse(localStorage.getItem("productos")) ?? productosIniciales;
 
-const carrito = JSON.parse(localStorage.getItem("misProductos")) ?? [];
+function obtenerCarritoDelStorage() {
+  try {
+    const carrito = localStorage.getItem("misProductos");
+
+      if (carrito == null) {
+        return [];
+      } else {
+          return JSON.parse(carrito);
+       }
+
+  } catch (error) {
+    console.error("No se pudieron obtener los datos del carrito");
+    alert("No se pudieron obtener los datos del carrito");
+    return [];
+
+  } finally {
+    console.log("Fin del bloque try-catch");
+  }
+}
+
+const carrito = obtenerCarritoDelStorage();
 
 const vaciarCarrito = document.getElementById("vaciar-carrito");
 const formulario = document.getElementById("formulario");
@@ -87,26 +107,27 @@ function imprimirElementosEnHTML(productos) {
   productosDOM.innerHTML = "";
 
   for (const producto of productos) {
+
+    const { nombre, precio, categoria, stock, img, id } = producto;
+
     const card = document.createElement("div");
     card.classList.add("card");
 
-    const estadoStock = producto.stock > 0 ? "Disponible" : "Sin stock";
+    const estadoStock = stock > 0 ? "Disponible" : "Sin stock";
 
     card.innerHTML = `
-      <img src="${producto.img}" alt="${producto.nombre}">
-      <h3>${producto.nombre}</h3>
-      <p>Categoría: ${producto.categoria}</p>
-      <p>Precio: $${producto.precio}</p>
-      <p>Stock: ${producto.stock}</p>
+      <img src="${img}" alt="${nombre}">
+      <h3>${nombre}</h3>
+      <p>Categoría: ${categoria}</p>
+      <p>Precio: $${precio}</p>
+      <p>Stock: ${stock}</p>
       <p>Estado: ${estadoStock}</p>
-      <button class="card-boton" id="${producto.nombre}${producto.id}">Comprar</button>
+      <button class="card-boton" id="${nombre}${id}">Comprar</button>
     `;
-
+    
     productosDOM.appendChild(card);
 
-    const btnComprar = document.getElementById(
-      `${producto.nombre}${producto.id}`
-    );
+    const btnComprar = document.getElementById(`${nombre}${id}`);
 
     btnComprar.addEventListener("click", () =>
       agregarProductoAlCarrito(producto)
@@ -117,15 +138,27 @@ function imprimirElementosEnHTML(productos) {
 //Agregar productos al carrito
 
 function agregarProductoAlCarrito(producto) {
-  carrito.push(producto);
+  if (producto.stock > 0) {
+    const productoCarrito = {
+      ...producto,
+      stock: 1
+    };
 
-  localStorage.setItem("misProductos", JSON.stringify(carrito));
+    carrito.push(productoCarrito);
+    producto.stock--;
 
-  mensaje.textContent = `Agregaste ${producto.nombre} al carrito`;
+    localStorage.setItem("misProductos", JSON.stringify(carrito));
+    localStorage.setItem("productos", JSON.stringify(productos));
 
-  imprimirCarritoEnHTML();
+    mensaje.textContent = `Agregaste ${producto.nombre} al carrito`;
+
+    imprimirCarritoEnHTML();
+    imprimirElementosEnHTML(productos);
+
+  } else {
+    mensaje.textContent = `${producto.nombre} no tiene stock disponible`;
+  }
 }
-
 
 function imprimirCarritoEnHTML() {
   const listaCarrito = document.getElementById("listaDeCarrito");
@@ -152,29 +185,47 @@ function agregarEventosEliminar() {
   botonesEliminar.forEach((boton) => {
 
     boton.addEventListener("click", () => {
+      const index = Number(boton.dataset.index);
+      const producto = carrito[index];
 
-        const index = Number(boton.dataset.index);
+      const productoOriginal = productos.find((item) => item.id === producto.id);
 
-        carrito.splice(index, 1);
+      if (productoOriginal) {
+        productoOriginal.stock++;
+      }
+      carrito.splice(index, 1);
 
-        localStorage.setItem("misProductos", JSON.stringify(carrito));
+      localStorage.setItem("misProductos", JSON.stringify(carrito));
+      localStorage.setItem("productos", JSON.stringify(productos));
 
-        imprimirCarritoEnHTML();
+      imprimirCarritoEnHTML();
+      imprimirElementosEnHTML(productos);
 
-        mensaje.textContent = "Producto eliminado del carrito";
+      mensaje.textContent = "Producto eliminado del carrito";
     });
   });
 }
 
 vaciarCarrito.addEventListener("click", () => {
+  for (const producto of carrito) {
+    const productoOriginal = productos.find((item) => item.id === producto.id);
+
+  if (productoOriginal) {
+      productoOriginal.stock++;
+    }
+  }
+
   carrito.length = 0;
-  localStorage.setItem( "misProductos", JSON.stringify(carrito) );
+
+  localStorage.setItem("misProductos", JSON.stringify(carrito));
+  localStorage.setItem("productos", JSON.stringify(productos));
 
   imprimirCarritoEnHTML();
+  imprimirElementosEnHTML(productos);
 
   mensaje.textContent = "Carrito vaciado";
 });
-
+  
 formulario.addEventListener("submit", tomarDatosForm);
 
 inputBuscar.addEventListener("keyup", () => {
@@ -229,3 +280,8 @@ function agregarProducto(e) {
 imprimirElementosEnHTML(productos);
 
 imprimirCarritoEnHTML();
+
+setTimeout(() => {
+  alert ("Bienvenido a nuestra tienda Zadira 👜. ¡Envío gratis en compras superiores a $100.000!")
+}, 3000)
+
