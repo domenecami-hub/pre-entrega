@@ -1,78 +1,29 @@
-const productosIniciales = [
-    {
-        id: 1, 
-        nombre: "Pulsera", 
-        precio: 6000, 
-        categoria: "Accesorios", 
-        stock: 15,
-        img: "./assets/Pulsera-pasador-publi.png"
-    },
-    {
-        id: 2, 
-        nombre: "Cartera Boho",
-        precio: 80000, 
-        categoria: "Bags",
-        stock: 4,
-        img: "./assets/cartera-boho-beige.jpg.jpeg"
-    },
-    {
-        id: 3,
-        nombre: "Billetera tipo sobre", 
-        precio: 30000, categoria: "Accesorios", 
-        stock: 1, 
-        img: "./assets/Billetera-Publi.jpeg"
-    },
-    {
-        id: 4, 
-        nombre: "Top Preta", 
-        precio: 55000, 
-        categoria: "Indumentaria", 
-        stock: 3, 
-        img: "./assets/Top-preta-publi.jpg.jpeg"
-    },
-    {
-        id: 5,
-        nombre: "Top Musa",
-        precio: 60000,
-        categoria: "Indumentaria",
-        stock: 5,
-        img: "./assets/top-musa-publi.jpg.jpeg"
-    },
-    {
-        id: 6,
-        nombre: "Top Duna",
-        precio: 65000,
-        categoria: "Indumentaria",
-        stock: 2,
-        img: "./assets/top-duna-publi.jpg.jpeg"
-    },
-    {
-        id: 8,
-        nombre: "Top Sia",
-        precio: 60000,
-        categoria: "Indumentaria",
-        stock: 0,
-        img: "./assets/top-sia-publi.jpg.jpeg"
-    },
-    {
-        id: 9,
-        nombre: "Mini falda",
-        precio: 65000,
-        categoria: "Indumentaria",
-        stock: 2,
-        img: "./assets/falda-publi.jpg.jpeg"
-    },
-    {
-        id: 10,
-        nombre: "Cartera Milan",
-        precio: 80000,
-        categoria: "Bags", 
-        stock: 3,
-        img: "./assets/carteraMilanpubli.jpg.jpeg"
-    }
-];
+async function cargarProductos() {
+  try {
+    const respuesta = await fetch("./data/data.json");
 
-const productos = JSON.parse(localStorage.getItem("productos")) ?? productosIniciales;
+    if (!respuesta.ok) {
+      throw new Error("No se pudieron cargar los productos");
+    }
+
+    const productosJSON = await respuesta.json();
+
+    if (productos.length === 0) {
+      productos.push(...productosJSON);
+
+      localStorage.setItem("productos", JSON.stringify(productos));
+
+      imprimirElementosEnHTML(productos);
+    }
+
+    console.log(productosJSON);
+
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+const productos = JSON.parse(localStorage.getItem("productos")) ?? [];
 
 function obtenerCarritoDelStorage() {
   try {
@@ -85,12 +36,12 @@ function obtenerCarritoDelStorage() {
        }
 
   } catch (error) {
-    console.error("No se pudieron obtener los datos del carrito");
-    alert("No se pudieron obtener los datos del carrito");
-    return [];
-
-  } finally {
-    console.log("Fin del bloque try-catch");
+      Toastify({
+        text: "No se pudieron obtener los datos del carrito",
+        duration: 3000,
+        gravity: "top",
+        position: "right",
+      }).showToast()
   }
 }
 
@@ -150,13 +101,29 @@ function agregarProductoAlCarrito(producto) {
     localStorage.setItem("misProductos", JSON.stringify(carrito));
     localStorage.setItem("productos", JSON.stringify(productos));
 
-    mensaje.textContent = `Agregaste ${producto.nombre} al carrito`;
+    Toastify({
+      text: `${producto.nombre} agregado al carrito 👜`,
+      duration: 3000,
+      gravity: "top",
+      position: "right",
+      style: {
+      background: "linear-gradient(to right, #8d726e, #efd8de)",
+      },
+    }).showToast();
 
     imprimirCarritoEnHTML();
     imprimirElementosEnHTML(productos);
 
   } else {
-    mensaje.textContent = `${producto.nombre} no tiene stock disponible`;
+    Toastify({
+      text: `${producto.nombre} sin stock 😔`,
+      duration: 3000,
+      gravity: "top",
+      position: "right",
+      style: {
+      background: "linear-gradient(to right, #8d726e)",
+      },
+    }).showToast();
   }
 }
 
@@ -277,11 +244,18 @@ function agregarProducto(e) {
   formularioAgregar.reset();
 }
 
+cargarProductos();
+
 imprimirElementosEnHTML(productos);
 
 imprimirCarritoEnHTML();
 
-setTimeout(() => {
-  alert ("Bienvenido a nuestra tienda Zadira 👜. ¡Envío gratis en compras superiores a $100.000!")
-}, 3000)
 
+setTimeout(() => {
+  Swal.fire({
+    title: "¡Bienvenido a Zadira! 👜",
+    text: "Envío gratis en compras superiores a $100.000.",
+    timer: 3000,
+    showConfirmButton: false
+  });
+}, 3000);

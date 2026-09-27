@@ -1,0 +1,74 @@
+[
+  {
+    "id": 1,
+    "nombre": "Pulsera",
+    "precio": 6000,
+    "categoria": "Accesorios",
+    "stock": 15,
+    "img": "./assets/Pulsera-pasador-publi.png"
+  },
+  {
+    "id": 2,
+    "nombre": "Cartera Boho",
+    "precio": 80000,
+    "categoria": "Bags",
+    "stock": 4,
+    "img": "./assets/cartera-boho-beige.jpg.jpeg"
+  },
+  {
+    "id": 3,
+    "nombre": "Billetera tipo sobre",
+    "precio": 30000,
+    "categoria": "Accesorios",
+    "stock": 1,
+    "img": "./assets/Billetera-Publi.jpeg"
+  },
+  {
+    "id": 4,
+    "nombre": "Top Preta",
+    "precio": 55000,
+    "categoria": "Indumentaria",
+    "stock": 3,
+    "img": "./assets/Top-preta-publi.jpg.jpeg"
+  },
+  {
+    "id": 5,
+    "nombre": "Top Musa",
+    "precio": 60000,
+    "categoria": "Indumentaria",
+    "stock": 5,
+    "img": "./assets/top-musa-publi.jpg.jpeg"
+  },
+  {
+    "id": 6,
+    "nombre": "Top Duna",
+    "precio": 65000,
+    "categoria": "Indumentaria",
+    "stock": 2,
+    "img": "./assets/top-duna-publi.jpg.jpeg"
+  },
+  {
+    "id": 8,
+    "nombre": "Top Sia",
+    "precio": 60000,
+    "categoria": "Indumentaria",
+    "stock": 0,
+    "img": "./assets/top-sia-publi.jpg.jpeg"
+  },
+  {
+    "id": 9,
+    "nombre": "Mini falda",
+    "precio": 65000,
+    "categoria": "Indumentaria",
+    "stock": 2,
+    "img": "./assets/falda-publi.jpg.jpeg"
+  },
+  {
+    "id": 10,
+    "nombre": "Cartera Milan",
+    "precio": 80000,
+    "categoria": "Bags",
+    "stock": 3,
+    "img": "./assets/carteraMilanpubli.jpg.jpeg"
+  }
+]
